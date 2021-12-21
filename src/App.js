@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { MenuItem, FormControl, Select, Card, CardContent } from "@material-ui/core";
+import {
+  MenuItem,
+  FormControl,
+  Select,
+  Card,
+  CardContent,
+} from "@material-ui/core";
 import "./App.css";
 import InfoBox from "./InfoBox";
 import Map from "./Map";
@@ -7,6 +13,15 @@ import Map from "./Map";
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState("worldwide");
+  const [countryInfo, setCountryInfo] = useState({});
+
+  useEffect(() => {
+    fetch(`https://disease.sh/v3/covid-19/all`)
+      .then((response) => response.json())
+      .then((data) => {
+        setCountryInfo(data);
+      });
+  });
 
   useEffect(() => {
     const getCountriesData = async () => {
@@ -28,7 +43,22 @@ function App() {
   const onCountryChange = async (e) => {
     const countryCode = e.target.value;
     setCountry(countryCode);
+
+    const url =
+      countryCode === "worldwide"
+        ? `https://disease.sh/v3/covid-19/all`
+        : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
+    await fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        setCountry(countryCode);
+
+        // All of the data from the country response
+        setCountryInfo(data);
+      });
   };
+
+  console.log(countryInfo);
 
   return (
     <div className="app">
@@ -56,12 +86,20 @@ function App() {
         <div className="app__stats">
           {/* Info Boxes */}
           <InfoBox
-            title="Coronavirus Cases"
-            cases={2000}
-            total={2000}
+            title="Cases"
+            cases={countryInfo.todayCases}
+            total={countryInfo.cases}
           ></InfoBox>
-          <InfoBox title="Recovered" cases={3000} total={2000}></InfoBox>
-          <InfoBox title="Deaths" cases={4000} total={2000}></InfoBox>
+          <InfoBox
+            title="Recovered"
+            cases={countryInfo.todayRecovered}
+            total={countryInfo.recovered}
+          ></InfoBox>
+          <InfoBox
+            title="Deaths"
+            cases={countryInfo.todayDeaths}
+            total={countryInfo.deaths}
+          ></InfoBox>
         </div>
         {/* Map */}
         <Map></Map>
