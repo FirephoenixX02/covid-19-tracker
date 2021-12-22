@@ -23,7 +23,7 @@ function App() {
       .then((data) => {
         setCountryInfo(data);
       });
-  });
+  }, []);
 
   useEffect(() => {
     const getCountriesData = async () => {
@@ -60,8 +60,6 @@ function App() {
         setCountryInfo(data);
       });
   };
-
-  console.log(countryInfo);
 
   return (
     <div className="app">
