@@ -1,51 +1,51 @@
 import React, { useState } from "react";
 import { Line, Chart } from "react-chartjs-2";
-import { Chart as ChartJS } from 'chart.js/auto'
+import { Chart as ChartJS } from "chart.js/auto";
 import { useEffect } from "react";
 import numeral from "numeral";
 
 const options = {
-    legend: {
-      display: false,
+  legend: {
+    display: false,
+  },
+  elements: {
+    point: {
+      radius: 0,
     },
-    elements: {
-      point: {
-        radius: 0,
+  },
+  tooltips: {
+    mode: "index",
+    intersect: false,
+    callbacks: {
+      label: function (tooltipItem, data) {
+        return numeral(tooltipItem.value).format("+0,0");
       },
     },
-    tooltips: {
-      mode: "index",
-      intersect: false,
-      callbacks: {
-        label: function (tooltipItem, data) {
-          return numeral(tooltipItem.value).format("+0,0");
+  },
+  scales: {
+    xAxes: [
+      {
+        type: "time",
+        time: {
+          format: "MM/DD/YY",
+          tooltipFormat: "ll",
         },
       },
-    },
-    scales: {
-      xAxes: [
-        {
-          type: "time",
-          time: {
-            format: "MM/DD/YY",
-            tooltipFormat: "ll",
+    ],
+    yAxes: [
+      {
+        grid: {
+          display: false,
+        },
+        ticks: {
+          callback: function (value, index, values) {
+            return numeral(value).format("0a");
           },
         },
-      ],
-      yAxes: [
-        {
-          grid: {
-            display: false,
-          },
-          ticks: {
-            callback: function (value, index, values) {
-              return numeral(value).format("0a");
-            },
-          },
-        },
-      ],
-    },
-  };
+      },
+    ],
+  },
+};
 
 const buildChartData = (data, casesType) => {
   let chartData = [];
