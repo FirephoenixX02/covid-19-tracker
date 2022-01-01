@@ -9,7 +9,7 @@ const casesTypeColors = {
   },
   recovered: {
     hex: "#7dd71d",
-    multiplier: 180,
+    multiplier: 60,
   },
   deaths: {
     hex: "#fb4443",
@@ -30,7 +30,7 @@ export const sortData = (data) => {
   return sortedData;
 };
 
-export const showDataOnMap = (data, casesType = "cases") =>
+export const showDataOnMap = (data, casesType="cases") =>
   data.map((country) => (
     <Circle
       center={[country.countryInfo.lat, country.countryInfo.long]}
