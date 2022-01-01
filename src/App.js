@@ -12,6 +12,7 @@ import Map from "./Map";
 import Table from "./Table";
 import { sortData } from "./util";
 import LineGraph from "./LineGraph";
+import "leaflet/dist/leaflet.css";
 
 function App() {
   const [countries, setCountries] = useState([]);
@@ -19,6 +20,9 @@ function App() {
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
   const [casesType, setCasesType] = useState("cases");
+  const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
+  const [mapZoom, setMapZoom] = useState(2);
+  const [mapCountries, setMapCountries] = useState([]);
 
   useEffect(() => {
     fetch(`https://disease.sh/v3/covid-19/all`)
@@ -37,10 +41,11 @@ function App() {
             name: country.country,
             value: country.countryInfo.iso2, // USA, UK etc.
           }));
-          
+
           const sortedData = sortData(data);
-          setTableData(sortedData);
           setCountries(countries);
+          setMapCountries(data);
+          setTableData(sortedData);
         });
     };
 
@@ -62,6 +67,9 @@ function App() {
 
         // All of the data from the country response
         setCountryInfo(data);
+        //Set Map Center
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(6);
       });
   };
 
@@ -73,7 +81,6 @@ function App() {
           <h1>Covid-19 Tracker</h1>
           <FormControl className="app__dropdown">
             {/* Title + Select input dropdown field*/}
-
             <Select
               variant="outlined"
               onChange={onCountryChange}
@@ -107,14 +114,19 @@ function App() {
           ></InfoBox>
         </div>
         {/* Map */}
-        <Map></Map>
+        <Map
+          countries={mapCountries}
+          casesType={casesType}
+          center={mapCenter}
+          zoom={mapZoom}
+        ></Map>
       </div>
       <Card className="app__right">
         <CardContent>
           <h3>Live Cases by Country</h3>
           {/* Table */}
           <Table countries={tableData}></Table>
-          <h3>Worldwide new cases</h3>
+          <h3>Worldwide new Cases</h3>
           {/* Graph */}
           <LineGraph casesType={casesType} />
         </CardContent>
